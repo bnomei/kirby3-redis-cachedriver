@@ -17,7 +17,7 @@ Redis based Cache-Driver
 
 This plugin is free (MIT license) but if you use it in a commercial project please consider to
 - [make a donation 🍻](https://www.paypal.me/bnomei/5) or
-- [buy me ☕☕](https://buymeacoff.ee/bnomei) or
+- [buy me ☕](https://buymeacoff.ee/bnomei) or
 - [buy a Kirby license using this affiliate link](https://a.paddle.com/v2/click/1129/35731?link=1170)
 
 ## Installation
@@ -29,7 +29,7 @@ This plugin is free (MIT license) but if you use it in a commercial project plea
 
 ## Setup
 
-[](https://getkirby.com/docs/guide/cache#cache-drivers-and-options)
+Set your Kirby 3 [Pages Cache-Driver](https://getkirby.com/docs/guide/cache#cache-drivers-and-options) to `redis`.
 
 **site/config.php**
 
@@ -51,7 +51,7 @@ return [
 ];
 ```
 
-> TIP: All redis related params can be callbacks. You might even load values from an [.env File](https://github.com/bnomei/kirby3-dotenv);
+> TIP: All redis related params can be callbacks. You might even load values from an [.env File](https://github.com/bnomei/kirby3-dotenv).
 
 **site/config/config.php**
  ```php
@@ -77,7 +77,8 @@ return [
 
 | bnomei.redis-cachedriver.            | Default        | Description               |            
 |---------------------------|----------------|---------------------------|
-|  | `` |  |
+| host | `127.0.0.1` |  |
+| port | `6379` |  |
 
 
 ## Dependencies
