@@ -31,7 +31,7 @@ This plugin is free (MIT license) but if you use it in a commercial project plea
 
 Set your Kirby 3 [Pages Cache-Driver](https://getkirby.com/docs/guide/cache#cache-drivers-and-options) to `redis`.
 
-**site/config.php**
+**site/config/config.php**
 
 ```php
 return [
@@ -51,9 +51,9 @@ return [
 ];
 ```
 
-> TIP: All redis related params can be callbacks. You might even load values from an [.env File](https://github.com/bnomei/kirby3-dotenv).
+All redis related params can be callbacks. You might even load values from an [.env File](https://github.com/bnomei/kirby3-dotenv).
 
-**site/config/config.php**
+**site/config/config.php with callbacks**
  ```php
 return [
     'cache' => [
