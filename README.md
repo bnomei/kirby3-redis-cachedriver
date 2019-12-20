@@ -26,21 +26,52 @@ This plugin is free (MIT license) but if you use it in a commercial project plea
 - `git submodule add https://github.com/bnomei/kirby3-redis-cachedriver.git site/plugins/kirby3-redis-cachedriver` or
 - `composer require bnomei/kirby3-redis-cachedriver`
 
+## Why Redis?
 
-## Setup
+At almost same performance [Memcached](https://github.com/memcached/memcached/wiki/ConfiguringServer#commandline-arguments) and [APCu](https://www.php.net/manual/en/apc.configuration.php) have more restrictive defaults. These can be changed but I prefer not having to do so. Both are perfectly fine for storing the compressed html output of most Kirby websites but beyond that consider using Redis.
 
-Set your Kirby 3 [Pages Cache-Driver](https://getkirby.com/docs/guide/cache#cache-drivers-and-options) to `redis`.
+| Defaults for | Memcached | APCu | Redis |
+|----|----|----|----|
+| max memory size | 64MB | 32MB | 0 (none) |
+| size of key/value pair | 1MB | 4MB | 512MB |
 
-**site/config/config.php**
+## Setup Pages Cache
 
+Set your Kirby 3 [Cache-Driver](https://getkirby.com/docs/guide/cache#cache-drivers-and-options) to `redis` for all Caches, Plugins or the Kirby Pages Cache in your `site/config/config.php`.
+
+**all caches**
 ```php
+<?php
 return [
     'cache' => [
+        'type' => 'redis', // default 'file'
+    ],
+    //... other options
+];
+```
+
+**per plugin**
+```php
+<?php
+return [
+    'bnomei.fingerprint.cache'       => ['type' => 'redis'],
+    'bnomei.handlebars.cache.render' => ['type' => 'redis'],
+    'bnomei.lapse.cache'             => ['type' => 'redis'],
+    //... other options
+];
+```
+
+> KNOWN ISSUE: https://github.com/getkirby/kirby/issues/2343
+
+**kirby pages**
+```php
+<?php
+return [
+    'cache' => [
+        // 'type' => 'file', // default
         'pages' => [
             'active' => true,
             'type' => 'redis',
-            'host' => '127.0.0.1', // default
-            'port' => '6379',  // default
             'prefix' => 'pages',
             'ignore' => function ($page) {
                 return $page->id() === 'something';
