@@ -104,6 +104,22 @@ return [
 ];
  ```
 
+### Cache methods
+```php
+$redis = new \Bnomei\Redis($options, $optionsClient);
+$redis->set('key', 'value', $expireInMinutes);
+$value = $redis->get('key', 'value', $default);
+$redis->remove('key');
+$redis->flush(); // db
+```
+
+### Predis Client
+```php
+$redis = new \Bnomei\Redis($options, $optionsClient);
+$client = $redis->redisClient();
+$dbsize = $client->dbsize(); // https://bit.ly/2Z8YKyN
+```
+
 ## Settings
 
 | bnomei.redis-cachedriver.            | Default        | Description               |            
