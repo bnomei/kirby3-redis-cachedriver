@@ -108,7 +108,7 @@ return [
 ```php
 $redis = new \Bnomei\Redis($options, $optionsClient);
 $redis->set('key', 'value', $expireInMinutes);
-$value = $redis->get('key', 'value', $default);
+$value = $redis->get('key', $default);
 $redis->remove('key');
 $redis->flush(); // db
 ```
