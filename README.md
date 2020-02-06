@@ -54,6 +54,7 @@ return [
 ```php
 <?php
 return [
+    'bnomei.feed.cache'              => ['type' => 'redis'],
     'bnomei.fingerprint.cache'       => ['type' => 'redis'],
     'bnomei.handlebars.cache.render' => ['type' => 'redis'],
     'bnomei.lapse.cache'             => ['type' => 'redis'],
