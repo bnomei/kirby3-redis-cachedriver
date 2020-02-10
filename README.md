@@ -56,12 +56,13 @@ return [
 ```php
 <?php
 return [
-    'bnomei.feed.cache'              => ['type' => 'redis'],
-    'bnomei.fingerprint.cache'       => ['type' => 'redis'],
-    'bnomei.handlebars.cache.render' => ['type' => 'redis'],
-    'bnomei.handlebars.cache.files'  => ['type' => 'redis'],
-    'bnomei.lapse.cache'             => ['type' => 'redis'],
-    'bnomei.thumbimageoptim.cache'   => ['type' => 'redis'],
+    'bnomei.feed.cache'                     => ['type' => 'redis'],
+    'bnomei.fingerprint.cache'              => ['type' => 'redis'],
+    'bnomei.handlebars.cache.render'        => ['type' => 'redis'],
+    'bnomei.handlebars.cache.files'         => ['type' => 'redis'],
+    'bnomei.lapse.cache'                    => ['type' => 'redis'],
+    'bnomei.thumbimageoptim.cache.index'    => ['type' => 'redis'],
+    'bnomei.thumbimageoptim.cache.stack'    => ['type' => 'redis'],
     //... other options
 ];
 ```
