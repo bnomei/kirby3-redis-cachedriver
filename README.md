@@ -50,6 +50,8 @@ return [
 ];
 ```
 
+> KNOWN ISSUE: This does not seem to work (yet).
+
 **per plugin**
 ```php
 <?php
@@ -57,12 +59,12 @@ return [
     'bnomei.feed.cache'              => ['type' => 'redis'],
     'bnomei.fingerprint.cache'       => ['type' => 'redis'],
     'bnomei.handlebars.cache.render' => ['type' => 'redis'],
+    'bnomei.handlebars.cache.files'  => ['type' => 'redis'],
     'bnomei.lapse.cache'             => ['type' => 'redis'],
+    'bnomei.thumbimageoptim.cache'   => ['type' => 'redis'],
     //... other options
 ];
 ```
-
-> KNOWN ISSUE: https://github.com/getkirby/kirby/issues/2343
 
 **kirby pages**
 ```php
