@@ -61,6 +61,7 @@ return [
     'bnomei.handlebars.cache.render'        => ['type' => 'redis'],
     'bnomei.handlebars.cache.files'         => ['type' => 'redis'],
     'bnomei.lapse.cache'                    => ['type' => 'redis'],
+    'bnomei.mailjet.cache'                  => ['type' => 'redis'],
     'bnomei.thumbimageoptim.cache.index'    => ['type' => 'redis'],
     'bnomei.thumbimageoptim.cache.stack'    => ['type' => 'redis'],
     //... other options
