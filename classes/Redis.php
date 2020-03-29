@@ -99,4 +99,12 @@ final class Redis extends Cache
     {
         return $this->connection->flushdb() === 'OK';
     }
+
+    /**
+     * @inheritDoc
+     */
+    public function root(): string
+    {
+        return realpath(__DIR__ . '/../') . '/cache';
+    }
 }
