@@ -1,14 +1,10 @@
 # Kirby 3 Redis Cache-Driver
 
 ![Release](https://flat.badgen.net/packagist/v/bnomei/kirby3-redis-cachedriver?color=ae81ff)
-![Stars](https://flat.badgen.net/packagist/ghs/bnomei/kirby3-redis-cachedriver?color=272822)
 ![Downloads](https://flat.badgen.net/packagist/dt/bnomei/kirby3-redis-cachedriver?color=272822)
-![Issues](https://flat.badgen.net/packagist/ghi/bnomei/kirby3-redis-cachedriver?color=e6db74)
 [![Build Status](https://flat.badgen.net/travis/bnomei/kirby3-redis-cachedriver)](https://travis-ci.com/bnomei/kirby3-redis-cachedriver)
 [![Coverage Status](https://flat.badgen.net/coveralls/c/github/bnomei/kirby3-redis-cachedriver)](https://coveralls.io/github/bnomei/kirby3-redis-cachedriver) 
 [![Maintainability](https://flat.badgen.net/codeclimate/maintainability/bnomei/kirby3-redis-cachedriver)](https://codeclimate.com/github/bnomei/kirby3-redis-cachedriver) 
-[![Demo](https://flat.badgen.net/badge/website/examples?color=f92672)](https://kirby3-plugins.bnomei.com/redis-cachedriver) 
-[![Gitter](https://flat.badgen.net/badge/gitter/chat?color=982ab3)](https://gitter.im/bnomei-kirby-3-plugins/community) 
 [![Twitter](https://flat.badgen.net/badge/twitter/bnomei?color=66d9ef)](https://twitter.com/bnomei)
 
 Redis based Cache-Driver
@@ -26,21 +22,57 @@ This plugin is free (MIT license) but if you use it in a commercial project plea
 - `git submodule add https://github.com/bnomei/kirby3-redis-cachedriver.git site/plugins/kirby3-redis-cachedriver` or
 - `composer require bnomei/kirby3-redis-cachedriver`
 
+## Why Redis?
 
-## Setup
+At almost same performance [Memcached](https://github.com/memcached/memcached/wiki/ConfiguringServer#commandline-arguments) and [APCu](https://www.php.net/manual/en/apc.configuration.php) have more restrictive defaults. These can be changed but I prefer not having to do so. Both are perfectly fine for storing the compressed html output of most Kirby websites but beyond that consider using Redis.
 
-Set your Kirby 3 [Pages Cache-Driver](https://getkirby.com/docs/guide/cache#cache-drivers-and-options) to `redis`.
+| Defaults for | Memcached | APCu | Redis |
+|----|----|----|----|
+| max memory size | 64MB | 32MB | 0 (none) |
+| size of key/value pair | 1MB | 4MB | 512MB |
 
-**site/config/config.php**
+## Setup Pages Cache
 
+Set your Kirby 3 [Cache-Driver](https://getkirby.com/docs/guide/cache#cache-drivers-and-options) to `redis` for all Caches, Plugins or the Kirby Pages Cache in your `site/config/config.php`.
+
+**all caches**
 ```php
+<?php
 return [
     'cache' => [
+        'type' => 'redis', // default 'file'
+    ],
+    //... other options
+];
+```
+
+> KNOWN ISSUE: This does not seem to work (yet).
+
+**per plugin**
+```php
+<?php
+return [
+    'bnomei.feed.cache'                     => ['type' => 'redis'],
+    'bnomei.fingerprint.cache'              => ['type' => 'redis'],
+    'bnomei.handlebars.cache.render'        => ['type' => 'redis'],
+    'bnomei.handlebars.cache.files'         => ['type' => 'redis'],
+    'bnomei.lapse.cache'                    => ['type' => 'redis'],
+    'bnomei.mailjet.cache'                  => ['type' => 'redis'],
+    'bnomei.thumbimageoptim.cache.index'    => ['type' => 'redis'],
+    'bnomei.thumbimageoptim.cache.stack'    => ['type' => 'redis'],
+    //... other options
+];
+```
+
+**kirby pages**
+```php
+<?php
+return [
+    'cache' => [
+        // 'type' => 'file', // default
         'pages' => [
             'active' => true,
             'type' => 'redis',
-            'host' => '127.0.0.1', // default
-            'port' => '6379',  // default
             'prefix' => 'pages',
             'ignore' => function ($page) {
                 return $page->id() === 'something';
@@ -72,6 +104,22 @@ return [
     ],
 ];
  ```
+
+### Cache methods
+```php
+$redis = new \Bnomei\Redis($options, $optionsClient);
+$redis->set('key', 'value', $expireInMinutes);
+$value = $redis->get('key', $default);
+$redis->remove('key');
+$redis->flush(); // db
+```
+
+### Predis Client
+```php
+$redis = new \Bnomei\Redis($options, $optionsClient);
+$client = $redis->redisClient();
+$dbsize = $client->dbsize(); // https://bit.ly/2Z8YKyN
+```
 
 ## Settings
 
