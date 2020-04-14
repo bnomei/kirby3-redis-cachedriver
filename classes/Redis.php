@@ -77,7 +77,7 @@ final class Redis extends Cache
             );
         }
 
-        return $status === 'OK';
+        return $status == 'OK';
     }
 
     /**
@@ -107,7 +107,7 @@ final class Redis extends Cache
      */
     public function flush(): bool
     {
-        return $this->connection->flushdb() === 'OK';
+        return $this->connection->flushdb() == 'OK';
     }
 
     /**
@@ -116,5 +116,14 @@ final class Redis extends Cache
     public function root(): string
     {
         return realpath(__DIR__ . '/../') . '/cache';
+    }
+
+    private static $singleton;
+    public static function getSingleton(): self
+    {
+        if (! static::$singleton) {
+            static::$singleton = new self();
+        }
+        return static::$singleton;
     }
 }

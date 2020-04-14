@@ -38,6 +38,7 @@ class ComposerStaticInit2d571c530ac2455b062b8f3d1ca217d6
 
     public static $classMap = array (
         'Bnomei\\Redis' => __DIR__ . '/../..' . '/classes/Redis.php',
+        'Bnomei\\RedisPage' => __DIR__ . '/../..' . '/classes/RedisPage.php',
         'Kirby\\ComposerInstaller\\CmsInstaller' => __DIR__ . '/..' . '/getkirby/composer-installer/src/ComposerInstaller/CmsInstaller.php',
         'Kirby\\ComposerInstaller\\Installer' => __DIR__ . '/..' . '/getkirby/composer-installer/src/ComposerInstaller/Installer.php',
         'Kirby\\ComposerInstaller\\Plugin' => __DIR__ . '/..' . '/getkirby/composer-installer/src/ComposerInstaller/Plugin.php',

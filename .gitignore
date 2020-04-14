@@ -34,3 +34,5 @@
 /vendor/getkirby/composer-installer
 /vendor/zordius/lightncandy/build
 coverage.xml
+.lock
+/tests/site/sessions/

@@ -4,7 +4,7 @@ return [
     'cache' => [
         'type' => 'redis',
         'pages' => [
-            'active' => true,
+            'active' => false, //
 //            'type'   => 'redis',
             'prefix'  => 'pages',
         ]

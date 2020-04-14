@@ -7,7 +7,7 @@
 [![Maintainability](https://flat.badgen.net/codeclimate/maintainability/bnomei/kirby3-redis-cachedriver)](https://codeclimate.com/github/bnomei/kirby3-redis-cachedriver) 
 [![Twitter](https://flat.badgen.net/badge/twitter/bnomei?color=66d9ef)](https://twitter.com/bnomei)
 
-Redis based Cache-Driver
+Redis based Cache-Driver and Content-File Cache
 
 ## Commercial Usage
 
@@ -120,6 +120,22 @@ $redis = new \Bnomei\Redis($options, $optionsClient);
 $client = $redis->redisClient();
 $dbsize = $client->dbsize(); // https://bit.ly/2Z8YKyN
 ```
+
+### Setup Content-File Cache
+
+To use this plugin create [Page-Models](https://getkirby.com/docs/guide/templates/page-models) and extend the `\Bnomei\RedisPage` class. This will read and write a **copy** of your Content-File to and from Redis.
+
+**site/models/example.php**
+```php
+<?php
+
+class ExamplePage extends \Bnomei\RedisPage
+{
+    // that's it. all done. 👍
+}
+```
+
+> TIP: If you set Kirbys global debug option to `true` cached Content-Files will be flushed.
 
 ## Settings
 
