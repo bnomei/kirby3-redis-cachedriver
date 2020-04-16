@@ -34,9 +34,9 @@ class RedisPage extends Page
     public function readContentRedis(string $languageCode = null): ?array
     {
         $key = $this->cacheId('redis');
-        return Redis::getSingleton()->redisClient()->exists($key) ?
-            json_decode(Redis::getSingleton()->redisClient()->get($key), true) :
-            null;
+        $data = Redis::getSingleton()->redisClient()->exists($key) ?
+            Redis::getSingleton()->redisClient()->get($key) : null;
+        return $data ? json_decode($data, true) : null;
     }
 
     public function writeContent(array $data, string $languageCode = null): bool
