@@ -23,7 +23,7 @@ class RedisPage extends Page
             }
         }
 
-        return $key;
+        return md5(kirby()->root()->index() . $key);
     }
 
     public function readContent(string $languageCode = null): array
