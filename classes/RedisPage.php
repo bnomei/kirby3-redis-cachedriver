@@ -13,6 +13,19 @@ class RedisPage extends Page
         return Redis::getSingleton()->redisClient()->dbsize();
     }
 
+    public function redisKey(string $languageCode = null): string
+    {
+        $key = $this->cacheId('redis');
+        if (!$languageCode) {
+            $languageCode = kirby()->languages()->count() ? kirby()->language()->code() : null;
+            if ($languageCode) {
+                $key = $languageCode . '.' . $key;
+            }
+        }
+
+        return $key;
+    }
+
     public function readContent(string $languageCode = null): array
     {
         // read from redis if exists
@@ -33,7 +46,7 @@ class RedisPage extends Page
 
     public function readContentRedis(string $languageCode = null): ?array
     {
-        $key = $this->cacheId('redis');
+        $key = $this->redisKey($languageCode);
         $data = Redis::getSingleton()->redisClient()->exists($key) ?
             Redis::getSingleton()->redisClient()->get($key) : null;
         return $data ? json_decode($data, true) : null;
@@ -48,7 +61,7 @@ class RedisPage extends Page
 
     public function writeContentRedis(array $data, string $languageCode = null): bool
     {
-        $key = $this->cacheId('redis'); // uses $languageCode
+        $key = $this->redisKey($languageCode);
         return Redis::getSingleton()->redisClient()
                 ->set($key, json_encode($data)) == 'OK';
     }
@@ -63,6 +76,11 @@ class RedisPage extends Page
     private function deleteRedis(): void
     {
         Redis::getSingleton()->redisClient()
-            ->del($this->cacheId('redis'));
+            ->del($this->redisKey());
+
+        foreach(kirby()->languages() as $language) {
+            Redis::getSingleton()->redisClient()
+                ->del($this->redisKey($language->code()));
+        }
     }
 }
