@@ -37,6 +37,7 @@ jobs:
 
       - name: Run Tests
         env:
-          REDIS_PORT: ${{ job.services.redis.ports[6379] }}
+          REDIS_HOST: localhost
+          REDIS_PORT: 6379
         run: |
           composer test
