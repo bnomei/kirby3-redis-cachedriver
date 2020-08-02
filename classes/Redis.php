@@ -28,7 +28,7 @@ final class Redis extends Cache
         ], $options);
 
         foreach ($this->options as $key => $call) {
-            if (is_callable($call) && in_array($key, [
+            if (!is_string($call) && is_callable($call) && in_array($key, [
                     'host', 'port', 'database', 'password',
                     'persistent', 'prefix', 'read_timeout', 'timeout',
                 ])) {
@@ -38,7 +38,7 @@ final class Redis extends Cache
 
         parent::__construct($this->options);
         $this->connection = new Client(
-            $options,      // https://github.com/nrk/predis#connecting-to-redis
+            $this->options,      // https://github.com/nrk/predis#connecting-to-redis
             $optionsClient // https://github.com/nrk/predis#client-configuration
         );
     }
