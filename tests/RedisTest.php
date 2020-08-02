@@ -13,6 +13,9 @@ final class RedisTest extends TestCase
     {
         $this->redis = new Redis([
             'prefix' => 'unittest',
+            'port' => function() {
+                return intval($_ENV['REDIS_PORT']);
+            },
         ]);
         $this->redis->flush();
     }

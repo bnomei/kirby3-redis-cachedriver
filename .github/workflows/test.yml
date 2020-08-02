@@ -36,4 +36,7 @@ jobs:
         run: composer require getkirby/cms:"3.*@RC"
 
       - name: Run Tests
-        run: composer test
+        evn:
+          REDIS_PORT: ${{ job.services.redis.ports[6379] }}
+        run: |
+          composer test
