@@ -6,6 +6,7 @@ $vendorDir = dirname(dirname(__FILE__));
 $baseDir = dirname($vendorDir);
 
 return array(
+    'cweagans\\Composer\\' => array($vendorDir . '/cweagans/composer-patches/src'),
     'Predis\\' => array($vendorDir . '/predis/predis/src'),
     'Kirby\\' => array($vendorDir . '/getkirby/composer-installer/src'),
     'Bnomei\\' => array($baseDir . '/classes'),

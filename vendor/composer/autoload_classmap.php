@@ -283,4 +283,7 @@ return array(
     'Predis\\Transaction\\AbortedMultiExecException' => $vendorDir . '/predis/predis/src/Transaction/AbortedMultiExecException.php',
     'Predis\\Transaction\\MultiExec' => $vendorDir . '/predis/predis/src/Transaction/MultiExec.php',
     'Predis\\Transaction\\MultiExecState' => $vendorDir . '/predis/predis/src/Transaction/MultiExecState.php',
+    'cweagans\\Composer\\PatchEvent' => $vendorDir . '/cweagans/composer-patches/src/PatchEvent.php',
+    'cweagans\\Composer\\PatchEvents' => $vendorDir . '/cweagans/composer-patches/src/PatchEvents.php',
+    'cweagans\\Composer\\Patches' => $vendorDir . '/cweagans/composer-patches/src/Patches.php',
 );
