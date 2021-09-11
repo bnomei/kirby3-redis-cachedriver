@@ -7,10 +7,6 @@ namespace Composer\Autoload;
 class ComposerStaticInit2d571c530ac2455b062b8f3d1ca217d6
 {
     public static $prefixLengthsPsr4 = array (
-        'c' => 
-        array (
-            'cweagans\\Composer\\' => 18,
-        ),
         'P' => 
         array (
             'Predis\\' => 7,
@@ -26,10 +22,6 @@ class ComposerStaticInit2d571c530ac2455b062b8f3d1ca217d6
     );
 
     public static $prefixDirsPsr4 = array (
-        'cweagans\\Composer\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/cweagans/composer-patches/src',
-        ),
         'Predis\\' => 
         array (
             0 => __DIR__ . '/..' . '/predis/predis/src',
@@ -47,6 +39,7 @@ class ComposerStaticInit2d571c530ac2455b062b8f3d1ca217d6
     public static $classMap = array (
         'Bnomei\\Redis' => __DIR__ . '/../..' . '/classes/Redis.php',
         'Bnomei\\RedisPage' => __DIR__ . '/../..' . '/classes/RedisPage.php',
+        'Composer\\InstalledVersions' => __DIR__ . '/..' . '/composer/InstalledVersions.php',
         'Kirby\\ComposerInstaller\\CmsInstaller' => __DIR__ . '/..' . '/getkirby/composer-installer/src/ComposerInstaller/CmsInstaller.php',
         'Kirby\\ComposerInstaller\\Installer' => __DIR__ . '/..' . '/getkirby/composer-installer/src/ComposerInstaller/Installer.php',
         'Kirby\\ComposerInstaller\\Plugin' => __DIR__ . '/..' . '/getkirby/composer-installer/src/ComposerInstaller/Plugin.php',
@@ -322,9 +315,6 @@ class ComposerStaticInit2d571c530ac2455b062b8f3d1ca217d6
         'Predis\\Transaction\\AbortedMultiExecException' => __DIR__ . '/..' . '/predis/predis/src/Transaction/AbortedMultiExecException.php',
         'Predis\\Transaction\\MultiExec' => __DIR__ . '/..' . '/predis/predis/src/Transaction/MultiExec.php',
         'Predis\\Transaction\\MultiExecState' => __DIR__ . '/..' . '/predis/predis/src/Transaction/MultiExecState.php',
-        'cweagans\\Composer\\PatchEvent' => __DIR__ . '/..' . '/cweagans/composer-patches/src/PatchEvent.php',
-        'cweagans\\Composer\\PatchEvents' => __DIR__ . '/..' . '/cweagans/composer-patches/src/PatchEvents.php',
-        'cweagans\\Composer\\Patches' => __DIR__ . '/..' . '/cweagans/composer-patches/src/Patches.php',
     );
 
     public static function getInitializer(ClassLoader $loader)

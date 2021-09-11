@@ -14,19 +14,17 @@
             <exclude>./tests/kirby</exclude>
         </testsuite>
     </testsuites>
-    <filter>
-        <whitelist>
-            <directory suffix=".php">./classes</directory>
-        </whitelist>
-    </filter>
     <php>
         <env name="APP_ENV" value="testing"/>
         <env name="CACHE_DRIVER" value="array"/>
         <env name="QUEUE_CONNECTION" value="sync"/>
-        <env name="REDIS_HOST" value="localhost"/>
-        <env name="REDIS_PORT" value="6379"/>
     </php>
-    <logging>
-        <log type="coverage-clover" target="./tests/logs/clover.xml"/>
-    </logging>
+    <coverage>
+        <include>
+            <directory suffix=".php">classes</directory>
+        </include>
+        <report>
+            <clover outputFile="tests/logs/clover.xml"/>
+        </report>
+    </coverage>
 </phpunit>

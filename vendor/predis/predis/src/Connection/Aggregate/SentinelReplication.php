@@ -146,14 +146,14 @@ class SentinelReplication implements ReplicationInterface
     }
 
     /**
-     * Sets the time to wait (in seconds) before fetching a new configuration
+     * Sets the time to wait (in milliseconds) before fetching a new configuration
      * from one of the sentinels.
      *
-     * @param float $seconds Time to wait before the next attempt.
+     * @param float $milliseconds Time to wait before the next attempt.
      */
-    public function setRetryWait($seconds)
+    public function setRetryWait($milliseconds)
     {
-        $this->retryWait = (float) $seconds;
+        $this->retryWait = (float) $milliseconds;
     }
 
     /**
@@ -239,9 +239,14 @@ class SentinelReplication implements ReplicationInterface
         }
 
         if (is_array($parameters)) {
-            // We explicitly set "database" and "password" to null,
-            // so that no AUTH and SELECT command is send to the sentinels.
+            // NOTE: sentinels do not accept AUTH and SELECT commands so we must
+            // explicitly set them to NULL to avoid problems when using default
+            // parameters set via client options. Actually AUTH is supported for
+            // sentinels starting with Redis 5 but we have to differentiate from
+            // sentinels passwords and nodes passwords, this will be implemented
+            // in a later release.
             $parameters['database'] = null;
+            $parameters['username'] = null;
             $parameters['password'] = null;
 
             if (!isset($parameters['timeout'])) {
