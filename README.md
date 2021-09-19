@@ -38,6 +38,10 @@ Redis based Cache-Driver
 | max memory size | 64MB | 32MB | 0 (none) |
 | size of key/value pair | 1MB | 4MB | 512MB |
 
+### Setup Content-File Cache
+
+Use [Kirby 3 Boost](https://github.com/bnomei/kirby3-boost) to setup a cache for content files.
+
 ## Setup Pages Cache
 
 Set your Kirby 3 [Cache-Driver](https://getkirby.com/docs/guide/cache#cache-drivers-and-options) to `redis` for all Caches, Plugins or the Kirby Pages Cache in your `site/config/config.php`.
@@ -51,6 +55,7 @@ return [
     'bnomei.handlebars.cache.render'        => ['type' => 'redis'],
     'bnomei.handlebars.cache.files'         => ['type' => 'redis'],
     'bnomei.lapse.cache'                    => ['type' => 'redis'],
+    'bnomei.boost.cache'                    => ['type' => 'redis'],
     //... other options
 ];
 ```
@@ -111,10 +116,6 @@ $redis = new \Bnomei\Redis($options, $optionsClient);
 $client = $redis->redisClient();
 $dbsize = $client->dbsize(); // https://bit.ly/2Z8YKyN
 ```
-
-### Setup Content-File Cache
-
-Use [Kirby 3 Boost](https://github.com/bnomei/kirby3-boost) to setup a cache for content files.
 
 ## Settings
 
