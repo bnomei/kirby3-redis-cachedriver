@@ -31,7 +31,7 @@ Redis based Cache-Driver
 
 ## Why Redis?
 
-[Memcached](https://github.com/memcached/memcached/wiki/ConfiguringServer#commandline-arguments) and [APCu](https://www.php.net/manual/en/apc.configuration.php) have more restrictive defaults.
+[Memcached](https://github.com/memcached/memcached/wiki/ConfiguringServer#commandline-arguments) and [APCu](https://www.php.net/manual/en/apc.configuration.php) have more restrictive defaults. Redis can by very fast with [proper configuration](https://blog.opstree.com/2019/04/16/redis-best-practices-and-performance-tuning/) like `tcp keepalive`.
 
 | Defaults for | Memcached | APCu | Redis |
 |----|----|----|----|
