@@ -9,12 +9,19 @@
 
 Redis based Cache-Driver
 
-## Commercial Usage
+## Commerical Usage
 
-This plugin is free (MIT license) but if you use it in a commercial project please consider to
-- [make a donation 🍻](https://www.paypal.me/bnomei/5) or
-- [buy me ☕](https://buymeacoff.ee/bnomei) or
-- [buy a Kirby license using this affiliate link](https://a.paddle.com/v2/click/1129/35731?link=1170)
+> <br>
+><b>Support open source!</b><br><br>
+> This plugin is free but if you use it in a commercial project please consider to sponsor me or make a donation.<br>
+> If my work helped you to make some cash it seems fair to me that I might get a little reward as well, right?<br><br>
+> Be kind. Share a little. Thanks.<br><br>
+> &dash; Bruno<br>
+> &nbsp; 
+
+| M | O | N | E | Y |
+|---|----|---|---|---|
+| [Github sponsor](https://github.com/sponsors/bnomei) | [Patreon](https://patreon.com/bnomei) | [Buy Me a Coffee](https://buymeacoff.ee/bnomei) | [Paypal dontation](https://www.paypal.me/bnomei/15) | [Buy a Kirby license using this affiliate link](https://a.paddle.com/v2/click/1129/35731?link=1170) |
 
 ## Installation
 
@@ -24,7 +31,7 @@ This plugin is free (MIT license) but if you use it in a commercial project plea
 
 ## Why Redis?
 
-At almost same performance [Memcached](https://github.com/memcached/memcached/wiki/ConfiguringServer#commandline-arguments) and [APCu](https://www.php.net/manual/en/apc.configuration.php) have more restrictive defaults. These can be changed but I prefer not having to do so. Both are perfectly fine for storing the compressed html output of most Kirby websites but beyond that consider using Redis.
+[Memcached](https://github.com/memcached/memcached/wiki/ConfiguringServer#commandline-arguments) and [APCu](https://www.php.net/manual/en/apc.configuration.php) have more restrictive defaults.
 
 | Defaults for | Memcached | APCu | Redis |
 |----|----|----|----|
@@ -35,19 +42,6 @@ At almost same performance [Memcached](https://github.com/memcached/memcached/wi
 
 Set your Kirby 3 [Cache-Driver](https://getkirby.com/docs/guide/cache#cache-drivers-and-options) to `redis` for all Caches, Plugins or the Kirby Pages Cache in your `site/config/config.php`.
 
-**all caches**
-```php
-<?php
-return [
-    'cache' => [
-        'type' => 'redis', // default 'file'
-    ],
-    //... other options
-];
-```
-
-> KNOWN ISSUE: This does not seem to work (yet).
-
 **per plugin**
 ```php
 <?php
@@ -57,9 +51,6 @@ return [
     'bnomei.handlebars.cache.render'        => ['type' => 'redis'],
     'bnomei.handlebars.cache.files'         => ['type' => 'redis'],
     'bnomei.lapse.cache'                    => ['type' => 'redis'],
-    'bnomei.mailjet.cache'                  => ['type' => 'redis'],
-    'bnomei.thumbimageoptim.cache.index'    => ['type' => 'redis'],
-    'bnomei.thumbimageoptim.cache.stack'    => ['type' => 'redis'],
     //... other options
 ];
 ```
