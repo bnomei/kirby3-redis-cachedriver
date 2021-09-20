@@ -115,13 +115,19 @@ final class Redis extends Cache
         $this->preload = array_diff_key($this->preload, $garbage);
 
         $pipeline = $this->redisClient()->pipeline();
+        foreach ($this->preload as $key => $timestamp) {
+            $pipeline->get($key);
+        }
         $responses = $pipeline->execute();
+
+
+        $pkeys = array_keys($this->preload);
         // this expects count of preload and responses to be equal
         for ($i = 0; $i < count($this->preload) && $i < count($responses); $i++) {
-            $key = $this->preload[$i];
+            $key = $pkeys[$i];
             $value = $responses[$i];
-            $value = is_string($value) ? Value::fromJson($value) : null;
-            if ($value) {
+            // store json
+            if (is_string($value)) {
                 $this->store[$key] = $value;
             } else {
                 $garbage[$key] = true;
@@ -170,7 +176,7 @@ final class Redis extends Cache
             );
         }
 
-        return $status == 'OK';
+        return $status == 'OK' || $status == 'QUEUED';
     }
 
     /**
@@ -209,7 +215,14 @@ final class Redis extends Cache
         if (array_key_exists($key, $this->preload)) {
             unset($this->preload[$key]);
         }
-        return $this->connection->del($key) > 0;
+        $status = $this->connection->del($key);
+        if (is_int($status)) {
+            return $status > 0;
+        }
+        if (is_string($status)) {
+            return $status === 'QUEUED';
+        }
+        return false;
     }
 
     /**
