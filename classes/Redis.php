@@ -114,12 +114,15 @@ final class Redis extends Cache
         // remove garbage
         $this->preload = array_diff_key($this->preload, $garbage);
 
+        if (count($this->preload) === 0) {
+            return;
+        }
+
         $pipeline = $this->redisClient()->pipeline();
         foreach ($this->preload as $key => $timestamp) {
             $pipeline->get($key);
         }
         $responses = $pipeline->execute();
-
 
         $pkeys = array_keys($this->preload);
         // this expects count of preload and responses to be equal
@@ -247,11 +250,19 @@ final class Redis extends Cache
 
     public function endTransaction()
     {
-        if ($this->transaction) {
-            $this->transaction->execute();
-            $this->transaction = null;
-            $this->transactionsCount = 0;
+        if ($this->transaction && $this->transactionsCount > 0) {
+            try{
+                $this->transaction->execute();
+            } catch(\Exception $ex) {
+                // TODO: ignore errors for now
+                // https://redis.io/topics/transactions
+                // It's important to note that even when a command fails, 
+                // all the other commands in the queue are processed – 
+                // Redis will not stop the processing of commands.
+            }
         }
+        $this->transactionsCount = 0;
+        $this->transaction = null;
     }
 
     public function transactionsCount(): int
