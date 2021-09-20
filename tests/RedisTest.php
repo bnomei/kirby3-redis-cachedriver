@@ -9,18 +9,25 @@ final class RedisTest extends TestCase
 {
     private $redis;
 
-    public function setUp(): void
+    public function getSingleton(): void
     {
-        $this->redis = new Redis([
+        $this->redis = Redis::singleton([
             'prefix' => 'unittest',
-            'host' => function() {
-                return intval($_ENV['REDIS_HOST']);
+            'host' => function () {
+                return 'localhost';
+            //return $_ENV['REDIS_HOST'];
             },
-            'port' => function() {
-                return intval($_ENV['REDIS_PORT']);
+            'port' => function () {
+                return 6379;
+            //return intval($_ENV['REDIS_PORT']);
             },
         ]);
-        $this->redis->flush();
+    }
+
+    public function setUp(): void
+    {
+        $this->getSingleton();
+        $this->redis->flushdb();
     }
 
     public function testConstruct()
@@ -42,7 +49,7 @@ final class RedisTest extends TestCase
     public function testCallableOption()
     {
         $redis = new Redis([
-            'port' => function() {
+            'port' => function () {
                 return 637900;
             },
         ]);
@@ -51,21 +58,21 @@ final class RedisTest extends TestCase
 
     public function testFlush()
     {
-        $this->redis->flush();
+        $this->redis->flushdb();
         $this->assertNull($this->redis->get('something'));
     }
 
     public function testAPI()
     {
         // flush and none
-        $this->redis->flush();
+        $this->redis->flushdb();
         $this->assertNull($this->redis->get('something'));
 
         // default
         $this->assertEquals('weird', $this->redis->get('something', 'weird'));
 
         // set and get infinite
-        $this->redis->set('something', 'wicked');
+        $this->assertTrue($this->redis->set('something', 'wicked'));
         $this->assertEquals('wicked', $this->redis->get('something'));
 
         // remove
@@ -73,7 +80,46 @@ final class RedisTest extends TestCase
         $this->assertNull($this->redis->get('something'));
 
         // with expiration
-        $this->redis->set('something', 'wobbly',1);
+        $this->redis->set('something', 'wobbly', 1);
         $this->assertEquals('wobbly', $this->redis->get('something'));
+    }
+
+    public function testTransaction()
+    {
+        $this->redis->flushdb();
+
+        $this->redis->beginTransaction();
+        for ($i = 0; $i<=5; $i++) {
+            $this->redis->set('something'.$i, 'wicked'.$i);
+        }
+        $this->redis->endTransaction();
+
+        $this->assertEquals('wicked5', $this->redis->get('something5'));
+        // flush data in store forcing a read from db
+        $this->redis->flush(); // flush not flushdb
+        $this->assertEquals('wicked5', $this->redis->get('something5'));
+    }
+
+    public function testPreload()
+    {
+        $this->redis->flushdb();
+
+        $this->redis->beginTransaction();
+        for ($i = 0; $i<=50; $i++) {
+            $this->redis->set('something'.$i, 'wicked'.$i);
+        }
+        $this->redis->endTransaction();
+
+        $this->redis->flush(); // flush not flushdb
+        $this->assertEquals(0, count($this->redis->preloadList()));
+
+        // request a few and see if preload matches
+        $this->assertEquals('wicked14', $this->redis->get('something14'));
+        $this->assertEquals('wicked42', $this->redis->get('something42'));
+        
+        // last one twice should only create one record
+        $this->assertEquals('wicked5', $this->redis->get('something5'));
+        $this->assertEquals('wicked5', $this->redis->get('something5'));
+        $this->assertEquals(3, count($this->redis->preloadList()));
     }
 }

@@ -2,4 +2,4 @@
 
 $kirby = new Kirby();
 
-echo $kirby->render();
+// echo $kirby->render();

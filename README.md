@@ -42,72 +42,32 @@ Redis based Cache-Driver
 
 Use [Kirby 3 Boost](https://github.com/bnomei/kirby3-boost) to setup a cache for content files.
 
-## Setup Pages Cache
+## Setup Cache
 
-Set your Kirby 3 [Cache-Driver](https://getkirby.com/docs/guide/cache#cache-drivers-and-options) to `redis` for all Caches, Plugins or the Kirby Pages Cache in your `site/config/config.php`.
-
-**per plugin**
-```php
-<?php
-return [
-    'bnomei.feed.cache'                     => ['type' => 'redis'],
-    'bnomei.fingerprint.cache'              => ['type' => 'redis'],
-    'bnomei.handlebars.cache.render'        => ['type' => 'redis'],
-    'bnomei.handlebars.cache.files'         => ['type' => 'redis'],
-    'bnomei.lapse.cache'                    => ['type' => 'redis'],
-    'bnomei.boost.cache'                    => ['type' => 'redis'],
-    //... other options
-];
-```
-
-**kirby pages**
-```php
-<?php
-return [
-    'cache' => [
-        // 'type' => 'file', // default
-        'pages' => [
-            'active' => true,
-            'type' => 'redis',
-            'prefix' => 'pages',
-            'ignore' => function ($page) {
-                return $page->id() === 'something';
-            }
-        ]
-    ],
-    //... other options
-];
-```
-
+Set your Kirby 3 [Cache-Driver](https://getkirby.com/docs/guide/cache#cache-drivers-and-options) to `redis` for Plugin caches or in your `site/config/config.php`. 
 All redis related params can be callbacks. You might even load values from an [.env File](https://github.com/bnomei/kirby3-dotenv).
 
-**site/config/config.php with callbacks**
+**site/config/config.php**
  ```php
 return [
-    'cache' => [
-        'pages' => [
-            'active' => true,
-            'type' => 'redis',
-            'host' => function() { return env('REDIS_HOST'); },
-            'port' => function() { return env('REDIS_PORT'); },
-            'database' => function() { return env('REDIS_DATABASE'); },
-            'password' => function() { return env('REDIS_PASSWORD'); },
-            'prefix' => 'pages',
-            'ignore' => function ($page) {
-                return $page->id() === 'something';
-            }
-        ]
+    'bnomei.boost.cache' => [
+        'type' => 'redis',
+        'host' => function() { return env('REDIS_HOST'); },
+        'port' => function() { return env('REDIS_PORT'); },
+        'database' => function() { return env('REDIS_DATABASE'); },
+        'password' => function() { return env('REDIS_PASSWORD'); },
     ],
 ];
  ```
 
 ### Cache methods
 ```php
-$redis = new \Bnomei\Redis($options, $optionsClient);
+$redis = \Bnomei\Redis::singleton();
 $redis->set('key', 'value', $expireInMinutes);
 $value = $redis->get('key', $default);
 $redis->remove('key');
-$redis->flush(); // db
+$redis->flush(); // data in memory
+$redis->flushdb(); // DANGER: flushes full redis db!!!
 ```
 
 ### Predis Client
@@ -121,6 +81,7 @@ $dbsize = $client->dbsize(); // https://bit.ly/2Z8YKyN
 
 | bnomei.redis-cachedriver.            | Default        | Description               |            
 |---------------------------|----------------|---------------------------|
+| preload | `true` | bool|int in minutes, will cache preload recently used data using a pipeline on init  |
 | host | `127.0.0.1` |  |
 | port | `6379` |  |
 
