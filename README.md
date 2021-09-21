@@ -12,7 +12,7 @@ Redis based Cache-Driver
 ## Commerical Usage
 
 > <br>
-><b>Support open source!</b><br><br>
+> <b>Support open source!</b><br><br>
 > This plugin is free but if you use it in a commercial project please consider to sponsor me or make a donation.<br>
 > If my work helped you to make some cash it seems fair to me that I might get a little reward as well, right?<br><br>
 > Be kind. Share a little. Thanks.<br><br>
@@ -31,16 +31,12 @@ Redis based Cache-Driver
 
 ## Why Redis?
 
-[Memcached](https://github.com/memcached/memcached/wiki/ConfiguringServer#commandline-arguments) and [APCu](https://www.php.net/manual/en/apc.configuration.php) have more restrictive defaults. Redis can by very fast with [proper configuration](https://blog.opstree.com/2019/04/16/redis-best-practices-and-performance-tuning/) like `tcp keepalive`.
+[Memcached](https://github.com/memcached/memcached/wiki/ConfiguringServer#commandline-arguments) and [APCu](https://www.php.net/manual/en/apc.configuration.php) have more restrictive defaults. Redis does not have these limitations and is by very fast with [proper configuration](https://blog.opstree.com/2019/04/16/redis-best-practices-and-performance-tuning/).
 
 | Defaults for | Memcached | APCu | Redis |
 |----|----|----|----|
 | max memory size | 64MB | 32MB | 0 (none) |
 | size of key/value pair | 1MB | 4MB | 512MB |
-
-### Setup Content-File Cache
-
-Use [Kirby 3 Boost](https://github.com/bnomei/kirby3-boost) to setup a cache for content files.
 
 ## Setup Cache
 
@@ -54,8 +50,8 @@ return [
         'type' => 'redis',
         'host' => function() { return env('REDIS_HOST'); },
         'port' => function() { return env('REDIS_PORT'); },
-        'database' => function() { return env('REDIS_DATABASE'); },
-        'password' => function() { return env('REDIS_PASSWORD'); },
+        // 'database' => function() { return env('REDIS_DATABASE'); },
+        // 'password' => function() { return env('REDIS_PASSWORD'); },
     ],
 ];
  ```
@@ -77,10 +73,48 @@ $client = $redis->redisClient();
 $dbsize = $client->dbsize(); // https://bit.ly/2Z8YKyN
 ```
 
+### Benchmark
+
+```php
+$redis = new \Bnomei\Redis($options, $optionsClient);
+$redis->benchmark(1000);
+```
+
+```shell script
+redis : 0.29747581481934
+file : 0.24331998825073
+```
+
+> ATTENTION: This will create and remove a lot of cache files and entries on redis
+
+### No cache when debugging
+
+When Kirbys global debug config is set to `true` no caches will be read. But entries will be created. This will make you live easier – trust me.
+
+### How to use Redis Cache Driver with Lapse or Boost
+
+You need to set the cache driver for the [lapse plugin](https://github.com/bnomei/kirby3-lapse) to `redis`.
+
+**site/config/config.php**
+```php
+<?php
+return [
+    'bnomei.lapse.cache' => ['type' => 'redis'],
+    'bnomei.boost.cache' => ['type' => 'redis'],
+    //... other options
+];
+```
+
+### Setup Content-File Cache
+
+Use [Kirby 3 Boost](https://github.com/bnomei/kirby3-boost) to setup a cache for content files.
+
+
 ## Settings
 
 | bnomei.redis-cachedriver.            | Default        | Description               |            
 |---------------------------|----------------|---------------------------|
+| store | `true` | keep accessed cache items stored in PHP memory for faster recurring access  |
 | preload | `true` | bool|int in minutes, will cache preload recently used data using a pipeline on init  |
 | host | `127.0.0.1` |  |
 | port | `6379` |  |

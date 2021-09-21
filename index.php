@@ -10,6 +10,7 @@ Kirby::plugin('bnomei/redis-cachedriver', [
     'options' => [
         // plugin
         'cache'   => true,
+        'store' => true, // php memory cache
         'preload' => true, // or minutes
 
         // redis

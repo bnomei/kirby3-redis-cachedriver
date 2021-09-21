@@ -122,4 +122,12 @@ final class RedisTest extends TestCase
         $this->assertEquals('wicked5', $this->redis->get('something5'));
         $this->assertEquals(3, count($this->redis->preloadList()));
     }
+
+    public function testBenchmark()
+    {
+        $this->redis->flush();
+        $this->redis->benchmark(1000);
+        unset($this->redis); // will happen at end of pageview
+        $this->assertTrue(true);
+    }
 }

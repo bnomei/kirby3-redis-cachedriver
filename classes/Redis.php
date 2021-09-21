@@ -7,6 +7,7 @@ namespace Bnomei;
 use Kirby\Cache\Cache;
 use Kirby\Cache\Value;
 use Kirby\Toolkit\A;
+use Kirby\Toolkit\Str;
 use Predis\Client;
 
 final class Redis extends Cache
@@ -32,6 +33,9 @@ final class Redis extends Cache
     public function __construct(array $options = [], array $optionsClient = [])
     {
         $this->options = array_merge([
+            'debug'   => \option('debug'),
+            'store'   => \option('bnomei.redis-cachedriver.store'),
+            'preload' => \option('bnomei.redis-cachedriver.preload'),
             'host'    => \option('bnomei.redis-cachedriver.host'),
             'port'    => \option('bnomei.redis-cachedriver.port'),
         ], $options);
@@ -53,7 +57,7 @@ final class Redis extends Cache
         );
         $this->transaction = null;
 
-        if (option('debug')) {
+        if ($this->option('debug')) {
             $this->flush();
         }
 
@@ -62,11 +66,11 @@ final class Redis extends Cache
 
     public function __destruct()
     {
-        if (option('debug')) {
+        if ($this->option('debug')) {
             return;
         }
 
-        if (option('bnomei.redis-cachedriver.preload') !== false) {
+        if ($this->option('preload') !== false) {
             kirby()->cache('bnomei.redis-cachedriver')->set('preload', $this->preload, 0);
         }
     }
@@ -91,7 +95,7 @@ final class Redis extends Cache
     private function preload()
     {
         $this->preload = [];
-        $expire = option('bnomei.redis-cachedriver.preload');
+        $expire = $this->option('preload');
         if ($expire === false) {
             return;
         } elseif (is_int($expire)) {
@@ -151,14 +155,18 @@ final class Redis extends Cache
      */
     public function set(string $key, $value, int $minutes = 0): bool
     {
+        /* SHOULD SET EVEN IN DEBUG
         if ($this->option('debug')) {
             return true;
         }
+        */
 
         $key = $this->key($key);
         $value = (new Value($value, $minutes))->toJson();
 
-        $this->store[$key] = $value;
+        if ($this->option('store')) {
+            $this->store[$key] = $value;
+        }
         $this->preload[$key] = time();
 
         $method =  $this->connection;
@@ -251,13 +259,13 @@ final class Redis extends Cache
     public function endTransaction()
     {
         if ($this->transaction && $this->transactionsCount > 0) {
-            try{
+            try {
                 $this->transaction->execute();
-            } catch(\Exception $ex) {
+            } catch (\Exception $ex) {
                 // TODO: ignore errors for now
                 // https://redis.io/topics/transactions
-                // It's important to note that even when a command fails, 
-                // all the other commands in the queue are processed – 
+                // It's important to note that even when a command fails,
+                // all the other commands in the queue are processed –
                 // Redis will not stop the processing of commands.
             }
         }
