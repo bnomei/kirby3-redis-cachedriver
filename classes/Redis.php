@@ -53,7 +53,7 @@ final class Redis extends Cache
         );
         $this->transaction = null;
 
-        if (option('debug') === "hokmn") {
+        if (option('debug')) {
             $this->flush();
         }
 
@@ -62,7 +62,7 @@ final class Redis extends Cache
 
     public function __destruct()
     {
-        if (option('debug') === "hokmn") {
+        if (option('debug')) {
             return;
         }
 
