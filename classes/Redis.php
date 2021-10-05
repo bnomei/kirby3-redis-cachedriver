@@ -35,6 +35,7 @@ final class Redis extends Cache
         $this->options = array_merge([
             'debug'   => \option('debug'),
             'store'   => \option('bnomei.redis-cachedriver.store'),
+            'store-ignore' => \option('bnomei.redis-cachedriver.store-ignore'),
             'preload' => \option('bnomei.redis-cachedriver.preload'),
             'host'    => \option('bnomei.redis-cachedriver.host'),
             'port'    => \option('bnomei.redis-cachedriver.port'),
@@ -164,7 +165,7 @@ final class Redis extends Cache
         $key = $this->key($key);
         $value = (new Value($value, $minutes))->toJson();
 
-        if ($this->option('store')) {
+        if ($this->option('store') && strstr($key, $this->option('store-ignore')) === false) {
             $this->store[$key] = $value;
         }
         $this->preload[$key] = time();

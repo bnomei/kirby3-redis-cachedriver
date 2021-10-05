@@ -115,6 +115,7 @@ Use [Kirby 3 Boost](https://github.com/bnomei/kirby3-boost) to setup a cache for
 | bnomei.redis-cachedriver.            | Default        | Description               |            
 |---------------------------|----------------|---------------------------|
 | store | `true` | keep accessed cache items stored in PHP memory for faster recurring access  |
+| store-ignore | `` | if key contains that string then ignore  |
 | preload | `true` | bool|int in minutes, will cache preload recently used data using a pipeline on init  |
 | host | `127.0.0.1` |  |
 | port | `6379` |  |
