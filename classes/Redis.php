@@ -203,7 +203,13 @@ final class Redis extends Cache
         $value = A::get($this->store, $key);
         $value = $value ?? $this->connection->get($key);
 
-        return is_string($value) ? Value::fromJson($value) : null;
+        $value = is_string($value) ? Value::fromJson($value) : null;
+
+        if ($this->option('store') && strstr($key, $this->option('store-ignore')) === false) {
+            $this->store[$key] = $value;
+        }
+
+        return $value;
     }
 
     public function get(string $key, $default = null)

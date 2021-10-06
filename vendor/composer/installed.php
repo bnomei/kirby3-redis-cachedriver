@@ -1,7 +1,7 @@
 <?php return array(
     'root' => array(
-        'pretty_version' => '1.5.5',
-        'version' => '1.5.5.0',
+        'pretty_version' => '1.5.6',
+        'version' => '1.5.6.0',
         'type' => 'kirby-plugin',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -11,8 +11,8 @@
     ),
     'versions' => array(
         'bnomei/kirby3-redis-cachedriver' => array(
-            'pretty_version' => '1.5.5',
-            'version' => '1.5.5.0',
+            'pretty_version' => '1.5.6',
+            'version' => '1.5.6.0',
             'type' => 'kirby-plugin',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
@@ -29,12 +29,12 @@
             'dev_requirement' => false,
         ),
         'predis/predis' => array(
-            'pretty_version' => 'v1.1.7',
-            'version' => '1.1.7.0',
+            'pretty_version' => 'v1.1.9',
+            'version' => '1.1.9.0',
             'type' => 'library',
             'install_path' => __DIR__ . '/../predis/predis',
             'aliases' => array(),
-            'reference' => 'b240daa106d4e02f0c5b7079b41e31ddf66fddf8',
+            'reference' => 'c50c3393bb9f47fa012d0cdfb727a266b0818259',
             'dev_requirement' => false,
         ),
     ),
