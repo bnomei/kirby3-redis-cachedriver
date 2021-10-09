@@ -62,6 +62,7 @@ final class Redis extends Cache
             $this->flush();
         }
 
+        $this->store = [];
         $this->preload();
     }
 
