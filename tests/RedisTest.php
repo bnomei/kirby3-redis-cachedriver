@@ -130,4 +130,13 @@ final class RedisTest extends TestCase
         unset($this->redis); // will happen at end of pageview
         $this->assertTrue(true);
     }
+
+    public function testReplaceInKey()
+    {
+        // see site/config/config.php
+        $this->redis->remove('HELLO');
+        $this->redis->remove('WORLD');
+        $this->redis->set('HELLO', 'world');
+        $this->assertEquals('world', $this->redis->get('WORLD'));
+    }
 }

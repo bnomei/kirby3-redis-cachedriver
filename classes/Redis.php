@@ -37,6 +37,7 @@ final class Redis extends Cache
             'store'   => \option('bnomei.redis-cachedriver.store'),
             'store-ignore' => \option('bnomei.redis-cachedriver.store-ignore'),
             'preload' => \option('bnomei.redis-cachedriver.preload'),
+            'key' => \option('bnomei.redis-cachedriver.key'),
             'host'    => \option('bnomei.redis-cachedriver.host'),
             'port'    => \option('bnomei.redis-cachedriver.port'),
         ], $options);
@@ -166,7 +167,7 @@ final class Redis extends Cache
         $key = $this->key($key);
         $value = (new Value($value, $minutes))->toJson();
 
-        if ($this->option('store') && strstr($key, $this->option('store-ignore')) === false) {
+        if ($this->option('store') && str_contains($key, $this->option('store-ignore')) === false) {
             $this->store[$key] = $value;
         }
         $this->preload[$key] = time();
@@ -206,7 +207,7 @@ final class Redis extends Cache
 
         $value = is_string($value) ? Value::fromJson($value) : null;
 
-        if ($this->option('store') && strstr($key, $this->option('store-ignore')) === false) {
+        if ($this->option('store') && str_contains($key, $this->option('store-ignore')) === false) {
             $this->store[$key] = $value;
         }
 
@@ -242,6 +243,12 @@ final class Redis extends Cache
             return $status === 'QUEUED';
         }
         return false;
+    }
+
+    public function key(string $key): string
+    {
+        $key = parent::key($key);
+        return $this->option('key')($key);
     }
 
     /**
