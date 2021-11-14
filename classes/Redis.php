@@ -12,6 +12,8 @@ use Predis\Client;
 
 final class Redis extends Cache
 {
+    private $shutdownCallbacks = [];
+
     /**
      * store for the connection
      * @var Predis\Client
@@ -67,8 +69,18 @@ final class Redis extends Cache
         $this->preload();
     }
 
+    public function register_shutdown_function($callback) {
+        $this->shutdownCallbacks[] = $callback;
+    }
+
     public function __destruct()
     {
+        foreach($this->shutdownCallbacks as $callback) {
+            if (!is_string($callback) && is_callable($callback)) {
+                $callback();
+            }
+        }
+
         if ($this->option('debug')) {
             return;
         }
