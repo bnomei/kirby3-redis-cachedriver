@@ -219,7 +219,7 @@ final class Redis extends Cache
 
         $value = is_string($value) ? Value::fromJson($value) : null;
 
-        if ($this->option('store') && str_contains($key, $this->option('store-ignore')) === false) {
+        if ($this->option('store') && !empty($this->option('store-ignore')) && str_contains($key, $this->option('store-ignore')) === false) {
             $this->store[$key] = $value;
         }
 
