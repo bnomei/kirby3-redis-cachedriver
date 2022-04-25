@@ -13,7 +13,9 @@ Kirby::plugin('bnomei/redis-cachedriver', [
         'store' => true, // php memory cache
         'store-ignore' => '', // if key contains then ignore
         'preload' => true, // or minutes
-        'key' => function($key) { return $key; },
+        'key' => function ($key) {
+            return $key;
+        },
 
         // redis
         'host'    => '127.0.0.1',

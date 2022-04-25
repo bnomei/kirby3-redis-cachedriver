@@ -69,13 +69,14 @@ final class Redis extends Cache
         $this->preload();
     }
 
-    public function register_shutdown_function($callback) {
+    public function register_shutdown_function($callback)
+    {
         $this->shutdownCallbacks[] = $callback;
     }
 
     public function __destruct()
     {
-        foreach($this->shutdownCallbacks as $callback) {
+        foreach ($this->shutdownCallbacks as $callback) {
             if (!is_string($callback) && is_callable($callback)) {
                 $callback();
             }
@@ -216,8 +217,7 @@ final class Redis extends Cache
 
         $value = A::get($this->store, $key);
         $value = $value ?? $this->connection->get($key);
-
-        $value = is_string($value) ? Value::fromJson($value) : null;
+        $value = is_string($value) ? Value::fromJson($value) : $value;
 
         if ($this->option('store') && (empty($this->option('store-ignore')) || str_contains($key, $this->option('store-ignore')) === false)) {
             $this->store[$key] = $value;

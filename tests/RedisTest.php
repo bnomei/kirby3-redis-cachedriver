@@ -116,7 +116,7 @@ final class RedisTest extends TestCase
         // request a few and see if preload matches
         $this->assertEquals('wicked14', $this->redis->get('something14'));
         $this->assertEquals('wicked42', $this->redis->get('something42'));
-        
+
         // last one twice should only create one record
         $this->assertEquals('wicked5', $this->redis->get('something5'));
         $this->assertEquals('wicked5', $this->redis->get('something5'));
