@@ -334,12 +334,12 @@ final class Redis extends Cache
                 $this->endTransaction();
             }
             echo $label . ' : ' . (microtime(true) - $time) . PHP_EOL;
-        }
-
-        // cleanup
-        for ($i = 0; $i < $count; $i++) {
-            $key = $prefix . $i;
-            $driver->remove($key);
+            
+            // cleanup
+            for ($i = 0; $i < $count; $i++) {
+                $key = $prefix . $i;
+                $driver->remove($key);
+            }
         }
     }
 
