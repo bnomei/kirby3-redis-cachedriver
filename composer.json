@@ -1,7 +1,7 @@
 {
   "name": "bnomei/kirby3-redis-cachedriver",
   "type": "kirby-plugin",
-  "version": "1.6.6",
+  "version": "1.7.0",
   "description": "Redis based Cache-Driver",
   "license": "MIT",
   "authors": [
@@ -40,9 +40,9 @@
     }
   },
   "require": {
-    "php": ">=7.4.0",
+    "php": ">=8.0",
     "getkirby/composer-installer": "^1.1",
-    "predis/predis": "^1.1"
+    "predis/predis": "^2.0"
   },
   "require-dev": {
     "getkirby/cms": "^3.5",
