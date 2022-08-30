@@ -318,16 +318,16 @@
         },
         {
             "name": "getkirby/cms",
-            "version": "3.7.2",
+            "version": "3.7.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/getkirby/kirby.git",
-                "reference": "0f4890a101f19632497ba0dc579a6f81b7fedf78"
+                "reference": "44158e8a5856384f35b07263240abc96db16ae7e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/getkirby/kirby/zipball/0f4890a101f19632497ba0dc579a6f81b7fedf78",
-                "reference": "0f4890a101f19632497ba0dc579a6f81b7fedf78",
+                "url": "https://api.github.com/repos/getkirby/kirby/zipball/44158e8a5856384f35b07263240abc96db16ae7e",
+                "reference": "44158e8a5856384f35b07263240abc96db16ae7e",
                 "shasum": ""
             },
             "require": {
@@ -413,7 +413,7 @@
                     "type": "custom"
                 }
             ],
-            "time": "2022-07-27T13:02:31+00:00"
+            "time": "2022-08-22T15:20:00+00:00"
         },
         {
             "name": "guzzlehttp/guzzle",
