@@ -209,7 +209,7 @@ final class Redis extends Cache
     /**
      * @inheritDoc
      */
-    public function retrieve(string $key)
+    public function retrieve(string $key): ?Value
     {
         $key = $this->key($key);
 
