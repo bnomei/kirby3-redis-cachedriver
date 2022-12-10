@@ -9,6 +9,7 @@ use Kirby\Cache\Value;
 use Kirby\Toolkit\A;
 use Kirby\Toolkit\Str;
 use Predis\Client;
+use Predis\Response\Status;
 
 final class Redis extends Cache
 {
@@ -217,6 +218,12 @@ final class Redis extends Cache
 
         $value = A::get($this->store, $key);
         $value = $value ?? $this->connection->get($key);
+        // value is not in store and if transaction is open but empty 
+        // then it will return 'queued' even for non existing values.
+        // checking if key exists does not help either.
+        if ($value instanceof Status && $value->getPayload() === 'QUEUED') {
+            $value = null;
+        }
         $value = is_string($value) ? Value::fromJson($value) : $value;
 
         if ($this->option('store') && (empty($this->option('store-ignore')) || str_contains($key, $this->option('store-ignore')) === false)) {
