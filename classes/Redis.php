@@ -283,6 +283,11 @@ final class Redis extends Cache
     {
         $this->store = [];
         $this->preload = [];
+        
+        $prefix = $this->key('');
+        $keys = $this->connection->keys($prefix . '*');
+        $this->connection->del($keys);
+        
         return true;
     }
 
