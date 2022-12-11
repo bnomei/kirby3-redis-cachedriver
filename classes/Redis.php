@@ -43,6 +43,7 @@ final class Redis extends Cache
             'key' => \option('bnomei.redis-cachedriver.key'),
             'host'    => \option('bnomei.redis-cachedriver.host'),
             'port'    => \option('bnomei.redis-cachedriver.port'),
+            'transaction_limit' => intval(\option('bnomei.transaction.limit'))
         ], $options);
 
         foreach ($this->options as $key => $call) {
@@ -202,6 +203,11 @@ final class Redis extends Cache
                 $key,
                 $this->expiration($minutes)
             );
+        }
+        
+        if ($this->transactionsCount >= intval($this->option('transaction_limit'))) {
+            $this->endTransaction();
+            $this->beginTransaction();
         }
 
         return $status == 'OK' || $status == 'QUEUED';

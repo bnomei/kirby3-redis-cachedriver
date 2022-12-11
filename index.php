@@ -16,6 +16,9 @@ Kirby::plugin('bnomei/redis-cachedriver', [
         'key' => function ($key) {
             return $key;
         },
+        'transaction' => [
+            'limit' => 4096, // exec transaction after n SET commands
+        ],
 
         // redis
         'host'    => '127.0.0.1',
