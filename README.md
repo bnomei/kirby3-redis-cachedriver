@@ -1,11 +1,8 @@
 # Kirby Redis Cache-Driver
 
-![Release](https://flat.badgen.net/packagist/v/bnomei/kirby3-redis-cachedriver?color=ae81ff)
-![Downloads](https://flat.badgen.net/packagist/dt/bnomei/kirby3-redis-cachedriver?color=272822)
-[![Build Status](https://flat.badgen.net/travis/bnomei/kirby3-redis-cachedriver)](https://travis-ci.com/bnomei/kirby3-redis-cachedriver)
-[![Coverage Status](https://flat.badgen.net/coveralls/c/github/bnomei/kirby3-redis-cachedriver)](https://coveralls.io/github/bnomei/kirby3-redis-cachedriver) 
-[![Maintainability](https://flat.badgen.net/codeclimate/maintainability/bnomei/kirby3-redis-cachedriver)](https://codeclimate.com/github/bnomei/kirby3-redis-cachedriver) 
-[![Twitter](https://flat.badgen.net/badge/twitter/bnomei?color=66d9ef)](https://twitter.com/bnomei)
+![Release](https://flat.badgen.net/packagist/v/bnomei/kirby3-redis-cachedriver?color=ae81ff&icon=github&label)
+[![Discord](https://flat.badgen.net/badge/discord/bnomei?color=7289da&icon=discord&label)](https://discordapp.com/users/bnomei)
+[![Buymecoffee](https://flat.badgen.net/badge/icon/donate?icon=buymeacoffee&color=FF813F&label)](https://www.buymeacoffee.com/bnomei)
 
 Redis based Cache-Driver
 
@@ -27,7 +24,7 @@ Redis based Cache-Driver
 ## Setup Cache
 
 Set your Kirby [Cache-Driver](https://getkirby.com/docs/guide/cache#cache-drivers-and-options) to `redis` for Plugin caches or in your `site/config/config.php`. 
-All redis related params can be callbacks. You might even load values from an [.env File](https://github.com/bnomei/kirby3-dotenv).
+All Redis-related params can be callbacks. You might even load values from an [.env File](https://github.com/bnomei/kirby3-dotenv).
 
 **site/config/config.php**
  ```php
@@ -75,11 +72,11 @@ file : 0.24331998825073
 
 ### No cache when debugging
 
-When Kirbys global debug config is set to `true` no caches will be read. But entries will be created. This will make you live easier – trust me.
+When Kirby's global debug config is set to `true` no caches will be read. But entries will be created.
 
 ### How to use Redis Cache Driver with Lapse or Boost
 
-You need to set the cache driver for the [lapse plugin](https://github.com/bnomei/kirby3-lapse) to `redis`.
+You must set the cache driver for the [lapse plugin](https://github.com/bnomei/kirby3-lapse) to `redis`.
 
 **site/config/config.php**
 ```php
@@ -93,7 +90,7 @@ return [
 
 ### Setup Content-File Cache
 
-Use [Kirby Boost](https://github.com/bnomei/kirby3-boost) to setup a cache for content files.
+Use [Kirby Boost](https://github.com/bnomei/kirby3-boost) to set up a cache for content files.
 
 
 ## Settings
