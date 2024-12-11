@@ -1,15 +1,15 @@
 <?php
 
-@include_once __DIR__ . '/vendor/autoload.php';
+@include_once __DIR__.'/vendor/autoload.php';
 
-if (!class_exists('Bnomei\Redis')) {
-    require_once __DIR__ . '/classes/Redis.php';
+if (! class_exists('Bnomei\Redis')) {
+    require_once __DIR__.'/classes/Redis.php';
 }
 
 Kirby::plugin('bnomei/redis-cachedriver', [
     'options' => [
         // plugin
-        'cache'   => true,
+        'cache' => true,
         'store' => true, // php memory cache
         'store-ignore' => '', // if key contains then ignore
         'preload' => true, // or minutes
@@ -21,10 +21,10 @@ Kirby::plugin('bnomei/redis-cachedriver', [
         ],
 
         // redis
-        'host'    => '127.0.0.1',
-        'port'    => 6379,
+        'host' => '127.0.0.1',
+        'port' => 6379,
     ],
     'cacheTypes' => [
-        'redis' => \Bnomei\Redis::class
-    ]
+        'adredis' => \Bnomei\Redis::class,
+    ],
 ]);

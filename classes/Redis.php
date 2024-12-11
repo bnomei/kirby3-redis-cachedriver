@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace Bnomei;
 
+use Closure;
 use Kirby\Cache\Cache;
+use Kirby\Cache\FileCache;
 use Kirby\Cache\Value;
 use Kirby\Toolkit\A;
 use Kirby\Toolkit\Str;
@@ -13,22 +15,17 @@ use Predis\Response\Status;
 
 final class Redis extends Cache
 {
-    private $shutdownCallbacks = [];
+    private array $shutdownCallbacks = [];
 
-    /**
-     * store for the connection
-     * @var Predis\Client
-     */
-    protected $connection;
+    protected Client $connection;
 
-    /** @var array $store */
-    private $preload;
+    private array $preload;
 
-    /** @var array $store */
-    private $store;
+    private array $store;
 
-    private $transaction;
-    private $transactionsCount = 0;
+    private mixed $transaction;
+
+    private int $transactionsCount = 0;
 
     /**
      * Sets all parameters which are needed to connect to Redis
@@ -36,21 +33,21 @@ final class Redis extends Cache
     public function __construct(array $options = [], array $optionsClient = [])
     {
         $this->options = array_merge([
-            'debug'   => \option('debug'),
-            'store'   => \option('bnomei.redis-cachedriver.store'),
+            'debug' => \option('debug'),
+            'store' => \option('bnomei.redis-cachedriver.store'),
             'store-ignore' => \option('bnomei.redis-cachedriver.store-ignore'),
             'preload' => \option('bnomei.redis-cachedriver.preload'),
             'key' => \option('bnomei.redis-cachedriver.key'),
-            'host'    => \option('bnomei.redis-cachedriver.host'),
-            'port'    => \option('bnomei.redis-cachedriver.port'),
-            'transaction_limit' => intval(\option('bnomei.transaction.limit'))
+            'host' => \option('bnomei.redis-cachedriver.host'),
+            'port' => \option('bnomei.redis-cachedriver.port'),
+            'transaction_limit' => intval(\option('bnomei.transaction.limit')),
         ], $options);
 
         foreach ($this->options as $key => $call) {
-            if (!is_string($call) && is_callable($call) && in_array($key, [
-                    'host', 'port', 'database', 'password',
-                    'persistent', 'prefix', 'read_timeout', 'timeout',
-                ])) {
+            if ($call instanceof Closure && in_array($key, [
+                'host', 'port', 'database', 'password',
+                'persistent', 'prefix', 'read_timeout', 'timeout',
+            ])) {
                 $this->options[$key] = $call();
             }
         }
@@ -58,12 +55,12 @@ final class Redis extends Cache
         parent::__construct($this->options);
 
         $this->connection = new Client(
-            $this->options,      // https://github.com/nrk/predis#connecting-to-redis
+            $this->options, // https://github.com/nrk/predis#connecting-to-redis
             $optionsClient // https://github.com/nrk/predis#client-configuration
         );
         $this->transaction = null;
 
-        if ($this->option('debug')) {
+        if ($this->options['debug']) {
             $this->flush();
         }
 
@@ -71,7 +68,7 @@ final class Redis extends Cache
         $this->preload();
     }
 
-    public function register_shutdown_function($callback)
+    public function register_shutdown_function(Closure $callback): void
     {
         $this->shutdownCallbacks[] = $callback;
     }
@@ -79,16 +76,16 @@ final class Redis extends Cache
     public function __destruct()
     {
         foreach ($this->shutdownCallbacks as $callback) {
-            if (!is_string($callback) && is_callable($callback)) {
+            if (! is_string($callback) && is_callable($callback)) {
                 $callback();
             }
         }
 
-        if ($this->option('debug')) {
+        if ($this->options['debug']) {
             return;
         }
 
-        if ($this->option('preload') !== false) {
+        if ($this->options['preload'] !== false) {
             kirby()->cache('bnomei.redis-cachedriver')->set('preload', $this->preload, 0);
         }
     }
@@ -98,26 +95,14 @@ final class Redis extends Cache
         return $this->connection;
     }
 
-    /**
-     * @param string|null $key
-     * @return array
-     */
-    public function option(?string $key = null)
-    {
-        if ($key) {
-            return A::get($this->options, $key);
-        }
-        return $this->options;
-    }
-
-    private function preload()
+    private function preload(): void
     {
         $this->preload = [];
-        $expire = $this->option('preload');
+        $expire = $this->options['preload'];
         if ($expire === false) {
             return;
         } elseif (is_int($expire)) {
-            $expire = time() - $expire * 60 ;
+            $expire = time() - $expire * 60;
         }
 
         $this->preload = kirby()->cache('bnomei.redis-cachedriver')->get('preload', []);
@@ -129,7 +114,6 @@ final class Redis extends Cache
         foreach ($this->preload as $key => $timestamp) {
             if ($timestamp < $expire) {
                 $garbage[$key] = true;
-                continue;
             }
         }
 
@@ -142,9 +126,9 @@ final class Redis extends Cache
 
         $pipeline = $this->redisClient()->pipeline();
         foreach ($this->preload as $key => $timestamp) {
-            $pipeline->get($key);
+            $pipeline->get($key); // @phpstan-ignore-line
         }
-        $responses = $pipeline->execute();
+        $responses = $pipeline->execute(); // @phpstan-ignore-line
 
         $pkeys = array_keys($this->preload);
         // this expects count of preload and responses to be equal
@@ -169,12 +153,12 @@ final class Redis extends Cache
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
-    public function set(string $key, $value, int $minutes = 0): bool
+    public function set(string $key, mixed $value, int $minutes = 0): bool
     {
         /* SHOULD SET EVEN IN DEBUG
-        if ($this->option('debug')) {
+        if ($this->options['debug')) {
             return true;
         }
         */
@@ -182,30 +166,30 @@ final class Redis extends Cache
         $key = $this->key($key);
         $value = (new Value($value, $minutes))->toJson();
 
-        if ($this->option('store') && (empty($this->option('store-ignore')) || str_contains($key, $this->option('store-ignore')) === false)) {
+        if ($this->options['store'] && (empty($this->options['store-ignore']) || str_contains($key, $this->options['store-ignore']) === false)) {
             $this->store[$key] = $value;
         }
         $this->preload[$key] = time();
 
-        $method =  $this->connection;
+        $method = $this->connection;
         if ($this->transaction) {
             $method = $this->transaction;
             $this->transactionsCount++;
         }
 
-        $status = $method->set(
+        $status = $method->set( // @phpstan-ignore-line
             $key,
             $value
         );
 
         if ($minutes) {
-            $status = $method->expireat(
+            $status = $method->expireat( // @phpstan-ignore-line
                 $key,
                 $this->expiration($minutes)
             );
         }
-        
-        if ($this->transactionsCount >= intval($this->option('transaction_limit'))) {
+
+        if ($this->transactionsCount >= intval($this->options['transaction_limit'])) {
             $this->endTransaction();
             $this->beginTransaction();
         }
@@ -214,7 +198,7 @@ final class Redis extends Cache
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function retrieve(string $key): ?Value
     {
@@ -224,7 +208,7 @@ final class Redis extends Cache
 
         $value = A::get($this->store, $key);
         $value = $value ?? $this->connection->get($key);
-        // value is not in store and if transaction is open but empty 
+        // value is not in store and if transaction is open but empty
         // then it will return 'queued' even for non existing values.
         // checking if key exists does not help either.
         if ($value instanceof Status && $value->getPayload() === 'QUEUED') {
@@ -232,16 +216,16 @@ final class Redis extends Cache
         }
         $value = is_string($value) ? Value::fromJson($value) : $value;
 
-        if ($this->option('store') && (empty($this->option('store-ignore')) || str_contains($key, $this->option('store-ignore')) === false)) {
+        if ($this->options['store'] && (empty($this->options['store-ignore']) || str_contains($key, $this->options['store-ignore']) === false)) {
             $this->store[$key] = $value;
         }
 
         return $value;
     }
 
-    public function get(string $key, $default = null)
+    public function get(string $key, mixed $default = null): mixed
     {
-        if ($this->option('debug')) {
+        if ($this->options['debug']) {
             return $default;
         }
 
@@ -249,7 +233,7 @@ final class Redis extends Cache
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function remove(string $key): bool
     {
@@ -261,33 +245,44 @@ final class Redis extends Cache
             unset($this->preload[$key]);
         }
         $status = $this->connection->del($key);
-        if (is_int($status)) {
+        if (is_int($status)) { // @phpstan-ignore-line
             return $status > 0;
         }
-        if (is_string($status)) {
+        if (is_string($status)) { // @phpstan-ignore-line
             return $status === 'QUEUED';
         }
+
         return false;
     }
 
     public function key(string $key): string
     {
-        $key = parent::key($key);
-        return $this->option('key')($key);
+        $option = $this->options['key'];
+
+        return $option instanceof Closure ? $option(parent::key($key)) : '';
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function flush(): bool
     {
+        $this->flushstore();
+
+        $prefix = $this->key('');
+        $keys = $this->connection->keys($prefix.'*');
+        if (count($keys)) {
+            $this->connection->del($keys);
+        }
+
+        return true;
+    }
+
+    public function flushstore(): bool
+    {
         $this->store = [];
         $this->preload = [];
-        
-        $prefix = $this->key('');
-        $keys = $this->connection->keys($prefix . '*');
-        $this->connection->del($keys);
-        
+
         return true;
     }
 
@@ -296,16 +291,19 @@ final class Redis extends Cache
         return $this->connection->flushdb() == 'OK';
     }
 
-    public function beginTransaction()
+    public function beginTransaction(): mixed
     {
         $this->transaction = $this->redisClient()->transaction();
+        $this->transactionsCount = 0;
+
+        return $this->transaction;
     }
 
-    public function endTransaction()
+    public function endTransaction(): void
     {
         if ($this->transaction && $this->transactionsCount > 0) {
             try {
-                $this->transaction->execute();
+                $this->transaction->execute(); // @phpstan-ignore-line
             } catch (\Exception $ex) {
                 // TODO: ignore errors for now
                 // https://redis.io/topics/transactions
@@ -323,9 +321,9 @@ final class Redis extends Cache
         return $this->transactionsCount;
     }
 
-    public function benchmark(int $count = 10)
+    public function benchmark(int $count = 10): void
     {
-        $prefix = "redis-benchmark-";
+        $prefix = 'redis-benchmark-';
         $redis = $this;
         $file = kirby()->cache('bnomei.redis-cachedriver'); // neat, right? ;-)
 
@@ -335,46 +333,52 @@ final class Redis extends Cache
                 $driver->beginTransaction();
             }
             for ($i = 0; $i < $count; $i++) {
-                $key = $prefix . $i;
-                if (!$driver->get($key)) {
+                $key = $prefix.$i;
+                if (! $driver->get($key)) {
                     $driver->set($key, Str::random(1000));
                 }
             }
             for ($i = $count * 0.6; $i < $count * 0.8; $i++) {
-                $key = $prefix . $i;
+                $key = $prefix.$i;
                 $driver->remove($key);
             }
             for ($i = $count * 0.8; $i < $count; $i++) {
-                $key = $prefix . $i;
+                $key = $prefix.$i;
                 $driver->set($key, Str::random(1000));
             }
             if ($label === 'redis') {
                 $this->endTransaction();
             }
-            echo $label . ' : ' . (microtime(true) - $time) . PHP_EOL;
-            
+            echo $label.' : '.(microtime(true) - $time).PHP_EOL;
+
             // cleanup
             for ($i = 0; $i < $count; $i++) {
-                $key = $prefix . $i;
+                $key = $prefix.$i;
                 $driver->remove($key);
             }
         }
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function root(): string
     {
-        return kirby()->cache('bnomei.redis-cachedriver')->root();
+        $cache = kirby()->cache('bnomei.redis-cachedriver');
+
+        return $cache instanceof FileCache ?
+            $cache->root() :
+            throw new \Exception('root() is only available for FileCache');
     }
 
-    private static $singleton;
+    private static ?self $singleton = null;
+
     public static function singleton(array $options = [], array $optionsClient = []): self
     {
-        if (! static::$singleton) {
-            static::$singleton = new self($options, $optionsClient);
+        if (self::$singleton === null) {
+            self::$singleton = new self($options, $optionsClient);
         }
-        return static::$singleton;
+
+        return self::$singleton;
     }
 }

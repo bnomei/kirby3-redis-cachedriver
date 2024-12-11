@@ -1,142 +1,122 @@
 <?php
 
-require_once __DIR__ . '/../vendor/autoload.php';
+require_once __DIR__.'/../vendor/autoload.php';
 
-use PHPUnit\Framework\TestCase;
 use Bnomei\Redis;
 
-final class RedisTest extends TestCase
+$redis = null;
+function redis(bool $force = false): Redis
 {
-    private $redis;
-
-    public function getSingleton(): void
-    {
-        $this->redis = Redis::singleton([
-            'prefix' => 'unittest',
-            'host' => function () {
-                return 'localhost';
+    global $redis;
+    if ($redis && $force === false) {
+        return $redis;
+    }
+    $redis = new Redis([
+        'prefix' => 'unittest',
+        'host' => function () {
+            return 'localhost';
             //return $_ENV['REDIS_HOST'];
-            },
-            'port' => function () {
-                return 6379;
+        },
+        'port' => function () {
+            return 6379;
             //return intval($_ENV['REDIS_PORT']);
-            },
-        ]);
-    }
+        },
+    ]);
 
-    public function setUp(): void
-    {
-        $this->getSingleton();
-        $this->redis->flushdb();
-    }
-
-    public function testConstruct()
-    {
-        $this->assertInstanceOf(Redis::class, $this->redis);
-    }
-
-    public function testClient()
-    {
-        $this->assertInstanceOf(Predis\Client::class, $this->redis->redisClient());
-    }
-
-    public function testOption()
-    {
-        $this->assertIsArray($this->redis->option());
-        $this->assertEquals(6379, $this->redis->option('port'));
-    }
-
-    public function testCallableOption()
-    {
-        $redis = new Redis([
-            'port' => function () {
-                return 637900;
-            },
-        ]);
-        $this->assertEquals(637900, $redis->option('port'));
-    }
-
-    public function testFlush()
-    {
-        $this->redis->flushdb();
-        $this->assertNull($this->redis->get('something'));
-    }
-
-    public function testAPI()
-    {
-        // flush and none
-        $this->redis->flushdb();
-        $this->assertNull($this->redis->get('something'));
-
-        // default
-        $this->assertEquals('weird', $this->redis->get('something', 'weird'));
-
-        // set and get infinite
-        $this->assertTrue($this->redis->set('something', 'wicked'));
-        $this->assertEquals('wicked', $this->redis->get('something'));
-
-        // remove
-        $this->redis->remove('something');
-        $this->assertNull($this->redis->get('something'));
-
-        // with expiration
-        $this->redis->set('something', 'wobbly', 1);
-        $this->assertEquals('wobbly', $this->redis->get('something'));
-    }
-
-    public function testTransaction()
-    {
-        $this->redis->flushdb();
-
-        $this->redis->beginTransaction();
-        for ($i = 0; $i<=5; $i++) {
-            $this->redis->set('something'.$i, 'wicked'.$i);
-        }
-        $this->redis->endTransaction();
-
-        $this->assertEquals('wicked5', $this->redis->get('something5'));
-        // flush data in store forcing a read from db
-        $this->redis->flush(); // flush not flushdb
-        $this->assertEquals('wicked5', $this->redis->get('something5'));
-    }
-
-    public function testPreload()
-    {
-        $this->redis->flushdb();
-
-        $this->redis->beginTransaction();
-        for ($i = 0; $i<=50; $i++) {
-            $this->redis->set('something'.$i, 'wicked'.$i);
-        }
-        $this->redis->endTransaction();
-
-        $this->redis->flush(); // flush not flushdb
-        $this->assertEquals(0, count($this->redis->preloadList()));
-
-        // request a few and see if preload matches
-        $this->assertEquals('wicked14', $this->redis->get('something14'));
-        $this->assertEquals('wicked42', $this->redis->get('something42'));
-
-        // last one twice should only create one record
-        $this->assertEquals('wicked5', $this->redis->get('something5'));
-        $this->assertEquals('wicked5', $this->redis->get('something5'));
-        $this->assertEquals(3, count($this->redis->preloadList()));
-    }
-
-    public function testBenchmark()
-    {
-        $this->redis->flush();
-        $this->redis->benchmark(1000);
-        unset($this->redis); // will happen at end of pageview
-        $this->assertTrue(true);
-    }
-
-    public function testReplaceInKey()
-    {
-        // see site/config/config.php
-        $this->redis->remove('HELLO');
-        $this->redis->remove('WORLD');
-        $this->redis->set('HELLO', 'world');
-        $this->assertEquals('world', $this->redis->get('WORLD'));
-    }
+    return $redis;
 }
+
+beforeEach(function () {
+    redis()->flushdb(); // ALL DATA in Redis DB
+});
+
+test('construct', function () {
+    expect(redis())->toBeInstanceOf(Redis::class);
+});
+
+test('client', function () {
+    expect(redis()->redisClient())->toBeInstanceOf(Predis\Client::class);
+});
+
+test('flush', function () {
+    redis()->flushdb();
+    expect(redis()->get('something'))->toBeNull();
+});
+
+test('api', function () {
+    // flush and none
+    redis()->flushdb();
+    expect(redis()->get('something'))->toBeNull();
+
+    // default
+    expect(redis()->get('something', 'weird'))->toEqual('weird');
+
+    // set and get infinite
+    expect(redis()->set('something', 'wicked'))->toBeTrue()
+        ->and(redis()->get('something'))->toEqual('wicked');
+
+    // remove
+    redis()->remove('something');
+    expect(redis()->get('something'))->toBeNull();
+
+    // with expiration
+    redis()->set('something', 'wobbly', 1);
+    expect(redis()->get('something'))->toEqual('wobbly');
+});
+
+test('transaction', function () {
+    redis()->flushdb();
+
+    redis()->beginTransaction();
+    for ($i = 0; $i <= 5; $i++) {
+        redis()->set('something'.$i, 'wicked'.$i);
+    }
+    redis()->endTransaction();
+
+    expect(redis()->get('something5'))->toEqual('wicked5');
+
+    // flush data in store forcing a read from db
+    redis()->flushstore();
+    // flush not flushdb
+    expect(redis()->get('something5'))->toEqual('wicked5');
+});
+
+test('preload', function () {
+    redis()->flushdb();
+
+    redis()->beginTransaction();
+    for ($i = 0; $i <= 50; $i++) {
+        redis()->set('something'.$i, 'wicked'.$i);
+    }
+    redis()->endTransaction();
+
+    redis()->flushstore();
+    // flush not flushdb
+    expect(count(redis()->preloadList()))->toEqual(0);
+
+    // request a few and see if preload matches
+    expect(redis()->get('something14'))->toEqual('wicked14')
+        ->and(redis()->get('something42'))->toEqual('wicked42');
+
+    // last one twice should only create one record
+    expect(redis()->get('something5'))->toEqual('wicked5')
+        ->and(redis()->get('something5'))->toEqual('wicked5')
+        ->and(count(redis()->preloadList()))->toEqual(3);
+});
+
+test('benchmark', function () {
+    redis()->flush();
+    redis()->benchmark(1000);
+    global $redis;
+    unset($redis);
+    // will happen at end of pageview
+    expect(true)->toBeTrue();
+});
+
+test('replace in key', function () {
+    // see site/config/config.php
+    redis()->remove('HELLO');
+    redis()->remove('WORLD');
+    redis()->set('HELLO', 'world');
+    expect(redis()->get('WORLD'))->toEqual('world');
+});

@@ -1,20 +1,19 @@
 # OS files
 .DS_Store
 .idea
+.nova
 *.cache
-*.rdb
 
 /tests/kirby
 /tests/logs
 /tests/media
 /tests/site/accounts
 /tests/site/cache
+/tests/site/logs
 /tests/site/sessions
-/tests/ui
 
 # files of Composer dependencies that are not needed for the plugin
 /vendor/**/.*
-/vendor/**/*.ini
 /vendor/**/*.json
 /vendor/**/*.txt
 /vendor/**/*.md
@@ -27,7 +26,6 @@
 /vendor/**/COPYING
 /vendor/**/VERSION
 /vendor/**/docs/*
-/vendor/**/bin/*
 /vendor/**/example/*
 /vendor/**/examples/*
 /vendor/**/test/*
@@ -35,4 +33,3 @@
 /vendor/**/php4/*
 /vendor/getkirby/composer-installer
 coverage.xml
-.lock
