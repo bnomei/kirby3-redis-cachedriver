@@ -66,8 +66,8 @@ return [
     'otherVendor.pluginName.cache' => ['type' => 'adredis', /*...*/],
     
     // like
-    'bnomei.turbo.cache.content' => ['type' => 'adredis', /*...*/],
-    'bnomei.turbo.cache.dir' => ['type' => 'adredis', /*...*/],
+    'bnomei.turbo.cache.cmd' => ['type' => 'adredis', /*...*/],
+    'bnomei.turbo.cache.model' => ['type' => 'adredis', /*...*/],
     
     // (optional) use a fast cache for Kirby's uuids
     'cache' => [
