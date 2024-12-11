@@ -15,7 +15,7 @@ use Predis\Response\Status;
 
 final class Redis extends Cache
 {
-    private array $options = [];
+    protected array $options = [];
     private array $shutdownCallbacks = [];
 
     protected Client $connection;
