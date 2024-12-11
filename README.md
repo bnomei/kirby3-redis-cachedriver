@@ -57,7 +57,7 @@ Combine this plugin with [Kirby Turbo](https://github.com/bnomei/kirby-turbo) to
 
 ### How to use Redis Cache Driver with Kirby or other plugins
 
-You must set the cache driver for the [lapse plugin](https://github.com/bnomei/kirby3-lapse) to `redis`.
+You must set the cache drivers for the desired cache (or sub-cache) to type of `adredis`, with additional options if needed.
 
 **site/config/config.php**
 ```php
