@@ -66,6 +66,7 @@ return [
     'otherVendor.pluginName.cache' => ['type' => 'adredis', /*...*/],
     
     // like
+    'bnomei.lapse.cache' => ['type' => 'adredis', /*...*/],
     'bnomei.turbo.cache.cmd' => ['type' => 'adredis', /*...*/],
     'bnomei.turbo.cache.model' => ['type' => 'adredis', /*...*/],
     
