@@ -4,7 +4,7 @@
 [![Discord](https://flat.badgen.net/badge/discord/bnomei?color=7289da&icon=discord&label)](https://discordapp.com/users/bnomei)
 [![Buymecoffee](https://flat.badgen.net/badge/icon/donate?icon=buymeacoffee&color=FF813F&label)](https://www.buymeacoffee.com/bnomei)
 
-Redis based Cache-Driver
+Advanced Redis cache-driver for Kirby CMS with in-memory store and preloading
 
 ## Installation
 
