@@ -37,6 +37,7 @@ final class Redis extends Cache
         $this->options = array_merge([
             'debug' => \option('debug'),
             'store' => \option('bnomei.redis-cachedriver.store'),
+            'flush-on-debug' => \option('bnomei.redis-cachedriver.flush-on-debug'),
             'store-ignore' => \option('bnomei.redis-cachedriver.store-ignore'),
             'preload' => \option('bnomei.redis-cachedriver.preload'),
             'key' => \option('bnomei.redis-cachedriver.key'),
@@ -62,7 +63,7 @@ final class Redis extends Cache
         );
         $this->transaction = null;
 
-        if ($this->options['debug']) {
+        if ($this->options['debug'] && $this->options['flush-on-debug']) {
             $this->flush();
         }
 

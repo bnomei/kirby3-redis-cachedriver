@@ -9,7 +9,7 @@
 [![Discord](https://flat.badgen.net/badge/discord/bnomei?color=7289da&icon=discord&label)](https://discordapp.com/users/bnomei)
 [![Buymecoffee](https://flat.badgen.net/badge/icon/donate?icon=buymeacoffee&color=FF813F&label)](https://www.buymeacoffee.com/bnomei)
 
-Advanced Redis cache-driver for Kirby CMS with in-memory store, transactions and preloading
+Advanced Redis cache-driver for Kirby CMS with in-memory store, transactionsd and preloading
 
 ## Installation
 
@@ -120,13 +120,14 @@ file : 0.24331998825073
 
 ## Settings
 
-| bnomei.redis-cachedriver.            | Default        | Description               |            
-|---------------------------|----------------|---------------------------|
-| store | `true` | keep accessed cache items stored in PHP memory for faster recurring access  |
-| store-ignore | `` | if key contains that string then ignore  |
-| preload | `true` | bool|int in minutes, will cache preload recently used data using a pipeline on init  |
-| host | `127.0.0.1` |  |
-| port | `6379` |  |
+| bnomei.redis-cachedriver.          | Default        | Description                                                                |            
+|-------------------------|----------------|----------------------------------------------------------------------------|
+| flush-on-debug | `true` | will flush cache if debug mode is enabled                                 |
+| store | `true` | keep accessed cache items stored in PHP memory for faster recurring access |
+| store-ignore | `` | if key contains that string then ignore                                    |
+| preload | `true` | bool                                                                       |int in minutes, will cache preload recently used data using a pipeline on init  |
+| host | `127.0.0.1` |                                                                            |
+| port | `6379` |                                                                            |
 
 
 ## Dependencies

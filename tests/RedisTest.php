@@ -15,11 +15,11 @@ function redis(bool $force = false): Redis
         'prefix' => 'unittest',
         'host' => function () {
             return 'localhost';
-            //return $_ENV['REDIS_HOST'];
+            // return $_ENV['REDIS_HOST'];
         },
         'port' => function () {
             return 6379;
-            //return intval($_ENV['REDIS_PORT']);
+            // return intval($_ENV['REDIS_PORT']);
         },
     ]);
 

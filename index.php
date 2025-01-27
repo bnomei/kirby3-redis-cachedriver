@@ -9,6 +9,7 @@ if (! class_exists('Bnomei\Redis')) {
 Kirby::plugin('bnomei/redis-cachedriver', [
     'options' => [
         // plugin
+        'flush-on-debug' => true,
         'cache' => true,
         'store' => true, // php memory cache
         'store-ignore' => '', // if key contains then ignore
