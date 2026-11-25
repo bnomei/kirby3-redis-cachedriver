@@ -11,6 +11,7 @@ use Kirby\Cache\Value;
 use Kirby\Toolkit\A;
 use Kirby\Toolkit\Str;
 use Predis\Client;
+use Predis\PredisException;
 use Predis\Response\Status;
 
 final class Redis extends Cache
@@ -102,7 +103,7 @@ final class Redis extends Cache
     {
         try {
             return (string) $this->connection->ping() === 'PONG';
-        } catch (\Predis\PredisException) {
+        } catch (PredisException) {
             return false;
         }
     }

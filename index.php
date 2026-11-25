@@ -1,5 +1,7 @@
 <?php
 
+use Bnomei\Redis;
+
 @include_once __DIR__.'/vendor/autoload.php';
 
 if (! class_exists('Bnomei\Redis')) {
@@ -26,6 +28,6 @@ Kirby::plugin('bnomei/redis-cachedriver', [
         'port' => 6379,
     ],
     'cacheTypes' => [
-        'adredis' => \Bnomei\Redis::class,
+        'adredis' => Redis::class,
     ],
 ]);

@@ -3,6 +3,7 @@
 require_once __DIR__.'/../vendor/autoload.php';
 
 use Bnomei\Redis;
+use Predis\Client;
 
 $redis = null;
 function redis(bool $force = false): Redis
@@ -35,7 +36,7 @@ test('construct', function () {
 });
 
 test('client', function () {
-    expect(redis()->redisClient())->toBeInstanceOf(Predis\Client::class)
+    expect(redis()->redisClient())->toBeInstanceOf(Client::class)
         ->and(redis()->enabled())->toBeTrue();
 });
 
