@@ -3,6 +3,7 @@
 require_once __DIR__.'/../vendor/autoload.php';
 
 use Bnomei\Redis;
+use Predis\Client;
 
 $redis = null;
 function redis(bool $force = false): Redis
@@ -35,7 +36,8 @@ test('construct', function () {
 });
 
 test('client', function () {
-    expect(redis()->redisClient())->toBeInstanceOf(Predis\Client::class);
+    expect(redis()->redisClient())->toBeInstanceOf(Client::class)
+        ->and(redis()->enabled())->toBeTrue();
 });
 
 test('flush', function () {
@@ -60,8 +62,8 @@ test('api', function () {
     expect(redis()->get('something'))->toBeNull();
 
     // with expiration
-    redis()->set('something', 'wobbly', 1);
-    expect(redis()->get('something'))->toEqual('wobbly');
+    expect(redis()->set('something', 'wobbly', 1))->toBeTrue()
+        ->and(redis()->get('something'))->toEqual('wobbly');
 });
 
 test('transaction', function () {
@@ -71,9 +73,11 @@ test('transaction', function () {
     for ($i = 0; $i <= 5; $i++) {
         redis()->set('something'.$i, 'wicked'.$i);
     }
+    expect(redis()->enabled())->toBeTrue();
     redis()->endTransaction();
 
-    expect(redis()->get('something5'))->toEqual('wicked5');
+    expect(redis()->redisClient()->isConnected())->toBeTrue()
+        ->and(redis()->get('something5'))->toEqual('wicked5');
 
     // flush data in store forcing a read from db
     redis()->flushstore();
