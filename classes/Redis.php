@@ -101,8 +101,15 @@ final class Redis extends Cache
 
     public function enabled(): bool
     {
+        // A PING on the shared connection would be queued outside Predis's MULTI bookkeeping.
+        if ($this->transaction !== null && $this->connection->isConnected()) {
+            return true;
+        }
+
         try {
-            return (string) $this->connection->ping() === 'PONG';
+            $reply = $this->connection->ping();
+
+            return $reply === 'PONG' || ($reply instanceof Status && $reply->getPayload() === 'PONG');
         } catch (PredisException) {
             return false;
         }

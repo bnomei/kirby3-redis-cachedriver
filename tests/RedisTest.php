@@ -73,9 +73,11 @@ test('transaction', function () {
     for ($i = 0; $i <= 5; $i++) {
         redis()->set('something'.$i, 'wicked'.$i);
     }
+    expect(redis()->enabled())->toBeTrue();
     redis()->endTransaction();
 
-    expect(redis()->get('something5'))->toEqual('wicked5');
+    expect(redis()->redisClient()->isConnected())->toBeTrue()
+        ->and(redis()->get('something5'))->toEqual('wicked5');
 
     // flush data in store forcing a read from db
     redis()->flushstore();
