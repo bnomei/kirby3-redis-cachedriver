@@ -35,7 +35,8 @@ test('construct', function () {
 });
 
 test('client', function () {
-    expect(redis()->redisClient())->toBeInstanceOf(Predis\Client::class);
+    expect(redis()->redisClient())->toBeInstanceOf(Predis\Client::class)
+        ->and(redis()->enabled())->toBeTrue();
 });
 
 test('flush', function () {
@@ -60,8 +61,8 @@ test('api', function () {
     expect(redis()->get('something'))->toBeNull();
 
     // with expiration
-    redis()->set('something', 'wobbly', 1);
-    expect(redis()->get('something'))->toEqual('wobbly');
+    expect(redis()->set('something', 'wobbly', 1))->toBeTrue()
+        ->and(redis()->get('something'))->toEqual('wobbly');
 });
 
 test('transaction', function () {

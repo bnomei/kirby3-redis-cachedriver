@@ -43,7 +43,7 @@ final class Redis extends Cache
             'key' => \option('bnomei.redis-cachedriver.key'),
             'host' => \option('bnomei.redis-cachedriver.host'),
             'port' => \option('bnomei.redis-cachedriver.port'),
-            'transaction_limit' => intval(\option('bnomei.transaction.limit')),
+            'transaction_limit' => intval(\option('bnomei.redis-cachedriver.transaction.limit', 4096)),
         ], $options);
 
         foreach ($this->options as $key => $call) {
@@ -96,6 +96,15 @@ final class Redis extends Cache
     public function redisClient(): Client
     {
         return $this->connection;
+    }
+
+    public function enabled(): bool
+    {
+        try {
+            return (string) $this->connection->ping() === 'PONG';
+        } catch (\Predis\PredisException) {
+            return false;
+        }
     }
 
     private function preload(): void
@@ -192,12 +201,12 @@ final class Redis extends Cache
             );
         }
 
-        if ($this->transactionsCount >= intval($this->options['transaction_limit'])) {
+        if ($this->transaction && $this->transactionsCount >= intval($this->options['transaction_limit'])) {
             $this->endTransaction();
             $this->beginTransaction();
         }
 
-        return $status == 'OK' || $status == 'QUEUED';
+        return $status === $method || $status === 1 || $status == 'OK' || $status == 'QUEUED';
     }
 
     /**
